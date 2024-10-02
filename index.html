@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Velha</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 10px;
+            justify-content: center;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 2em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #333;
+            cursor: pointer;
+            background-color: lightblue;
+        }
+
+        .cell:hover {
+            background-color: lightgreen;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .restart-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Jogo da Velha</h1>
+
+    <div>
+        <label for="player1">Jogador X: </label>
+        <input type="text" id="player1" placeholder="Nome do Jogador X">
+    </div>
+    <div>
+        <label for="player2">Jogador O: </label>
+        <input type="text" id="player2" placeholder="Nome do Jogador O">
+    </div>
+
+    <div class="container" id="game-board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+    </div>
+
+    <button class="restart-btn" id="restart-btn" onclick="reiniciarJogo()">Reiniciar Jogo</button>
+
+    <script>
+        let currentPlayer = 'X';
+        let board = ["", "", "", "", "", "", "", "", ""];
+        const cells = document.querySelectorAll('.cell');
+        let player1 = 'Jogador X';
+        let player2 = 'Jogador O';
+
+        // Inicializar o jogo
+        cells.forEach(cell => {
+            cell.addEventListener('click', handleClick);
+        });
+
+        function handleClick(event) {
+            const index = event.target.getAttribute('data-index');
+            if (board[index] === "") {
+                board[index] = currentPlayer;
+                event.target.innerText = currentPlayer;
+                if (checkWinner()) {
+                    alert(`Parabéns, ${currentPlayer === 'X' ? player1 : player2} venceu!`);
+                    resetBoard();
+                } else if (board.every(cell => cell !== "")) {
+                    alert('Empate!');
+                    resetBoard();
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                }
+            }
+        }
+
+        function checkWinner() {
+            const winningCombinations = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Linhas
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Colunas
+                [0, 4, 8], [2, 4, 6]             // Diagonais
+            ];
+
+            return winningCombinations.some(combination => {
+                return combination.every(index => board[index] === currentPlayer);
+            });
+        }
+
+        function resetBoard() {
+            board = ["", "", "", "", "", "", "", "", ""];
+            cells.forEach(cell => cell.innerText = "");
+            currentPlayer = 'X';
+        }
+
+        // Reiniciar o jogo
+        function reiniciarJogo() {
+            resetBoard();
+            player1 = document.getElementById('player1').value || 'Jogador X';
+            player2 = document.getElementById('player2').value || 'Jogador O';
+        }
+    </script>
+</body>
+
+</html>
